@@ -1,6 +1,9 @@
 import path from "path";
 import fs from "fs";
 import { Database } from "bun:sqlite";
+import indexHtml from "../public/index.html" with { type: "file" };
+import appJs from "../public/app.js" with { type: "file" };
+import stylesCss from "../public/styles.css" with { type: "file" };
 import {
   resolveDbPath, openDb, backupDir, createBackup, listBackups,
   listSessions, getSession, touchSession, listMessages,
@@ -13,6 +16,15 @@ import { assertRecord, validatePartData, validateMessageData, validateSessionPat
 const PORT = Number(process.env.PORT ?? 4097);
 const DB_PATH = resolveDbPath();
 const PUBLIC = path.join(import.meta.dir, "..", "public");
+
+// Assets are imported so `bun build --compile` embeds them in the binary.
+// A compiled executable has no `public/` next to it, so disk lookups alone
+// would fail with ENOENT inside Bun's virtual `/$bunfs` filesystem.
+const EMBEDDED: Record<string, string> = {
+  "index.html": indexHtml,
+  "app.js": appJs,
+  "styles.css": stylesCss,
+};
 
 // Single handle; reopened after restore.
 let db: Database = openDb(DB_PATH);
@@ -442,10 +454,12 @@ async function handleWrite(req: Request, url: URL, p: string, m: string): Promis
 function serveStatic(p: string): Response {
   let rel = p === "/" ? "index.html" : p.slice(1);
   if (rel.includes("..")) return err("Not found", 404);
-  let file = path.join(PUBLIC, rel);
-  if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) {
-    if (!rel.startsWith("api/")) file = path.join(PUBLIC, "index.html");
-    else return err("Not found", 404);
+  let file = EMBEDDED[rel];
+  if (!file) {
+    const disk = path.join(PUBLIC, rel);
+    if (fs.existsSync(disk) && !fs.statSync(disk).isDirectory()) file = disk;
+    else if (rel.startsWith("api/")) return err("Not found", 404);
+    else file = EMBEDDED["index.html"]!;
   }
   const ext = path.extname(file);
   const type = ext === ".html" ? "text/html" : ext === ".js" ? "text/javascript" : ext === ".css" ? "text/css" : ext === ".json" ? "application/json" : "application/octet-stream";

@@ -89,6 +89,11 @@ bun src/server.ts
 bun build src/server.ts --compile --outfile opencode-editor
 ```
 
+The executable is self-contained: `public/` is embedded at compile time, so
+the binary serves the UI from any working directory and does not need the
+repository or `public/` alongside it. Running `bun src/server.ts` still reads
+`public/` from disk and picks up UI edits without rebuilding.
+
 ## API overview
 
 | method & path | purpose |

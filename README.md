@@ -72,7 +72,7 @@ context is what gets loaded.
 ## Run
 
 ```sh
-~/.bun/bin/bun src/server.ts
+bun src/server.ts
 # → http://localhost:4097
 ```
 
@@ -86,7 +86,7 @@ context is what gets loaded.
 ## Compile
 
 ```sh
-~/.bun/bin/bun build src/server.ts --compile --outfile opencode-editor
+bun build src/server.ts --compile --outfile opencode-editor
 ```
 
 ## API overview
@@ -121,7 +121,7 @@ test/            bun:test round-trip suite (fixture DB, no live writes)
 ## Test
 
 ```sh
-~/.bun/bin/bun test   # 9 tests: hydration, compaction projection,
+bun test   # 9 tests: hydration, compaction projection,
                       # validators, rollback — all against an in-memory fixture
 ```
 

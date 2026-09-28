@@ -6,6 +6,7 @@
   "scripts": {
     "start": "bun src/server.ts",
     "dev": "bun --watch src/server.ts",
+    "build": "bun build src/server.ts --compile --outfile opencode-editor",
     "test": "bun test"
   }
 }

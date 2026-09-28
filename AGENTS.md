@@ -35,7 +35,7 @@ app reads and writes opencode's own schema in place.
 
 ## Toolchain and dependencies
 
-- Use Bun 1.4.x (`~/.bun/bin/bun`; ensure it is on `PATH`). `package.json`
+- Use Bun 1.4.x (`bun`; ensure it is on `PATH`). `package.json`
   is authoritative and intentionally dependency-free.
 - The only database driver is `bun:sqlite` (built in). Do not add
   `better-sqlite3`, `drizzle`, or any other dependency unless the task
@@ -48,7 +48,7 @@ app reads and writes opencode's own schema in place.
 Run the server directly:
 
 ```sh
-~/.bun/bin/bun src/server.ts
+bun src/server.ts
 # → http://localhost:4097
 ```
 
@@ -75,7 +75,7 @@ live database:
 
 ```sh
 sqlite3 ~/.local/share/opencode/opencode.db ".backup '/tmp/e2e-opencode.db'"
-OPENCODE_DB=/tmp/e2e-opencode.db PORT=4098 ~/.bun/bin/bun src/server.ts
+OPENCODE_DB=/tmp/e2e-opencode.db PORT=4098 bun src/server.ts
 ```
 
 ## Required verification
@@ -83,7 +83,7 @@ OPENCODE_DB=/tmp/e2e-opencode.db PORT=4098 ~/.bun/bin/bun src/server.ts
 Run the narrowest relevant test while iterating, then run the repository gate before reporting completion:
 
 ```sh
-~/.bun/bin/bun test
+bun test
 ```
 
 `bun test` runs the full `test/` suite against an in-memory fixture; it must
@@ -91,7 +91,7 @@ stay green and must never require the real database. For server changes, also
 smoke-test the boot contract the UI depends on:
 
 ```sh
-~/.bun/bin/bun src/server.ts & sleep 2
+bun src/server.ts & sleep 2
 curl -s localhost:4097/api/meta | head -c 120
 curl -s "localhost:4097/api/sessions?limit=1" | head -c 120
 kill %1

@@ -16,9 +16,9 @@ The implementation files are:
 - `src/server.ts`: `Bun.serve` router — the whole REST API plus static-file
   serving for the UI. All endpoints return `{ data }` on success or
   `{ error: { message } }` on failure; keep that envelope consistent.
-- `src/db.ts`: sole SQL owner — db-path resolution, open/pragmas, queries,
-  transactions, id generation, and backups. No other module may import
-  `bun:sqlite` or issue SQL directly.
+- `src/db.ts`: connection, read queries, transactions, id generation, and
+  backups. Handler-specific writes live in `src/server.ts` under
+  `writeTxn()` + `ensureBackup()`.
 - `src/history.ts`: port of opencode's `filterCompacted` projection, the
   `len(JSON)/4` token estimate, and the tail-start suggester. Pure functions
   over hydrated messages; never mutates durable history.
@@ -40,7 +40,8 @@ app reads and writes opencode's own schema in place.
 - The only database driver is `bun:sqlite` (built in). Do not add
   `better-sqlite3`, `drizzle`, or any other dependency unless the task
   justifies the maintenance cost.
-- TypeScript runs directly under Bun with no build step and no `tsconfig`.
+- TypeScript runs directly under Bun with no `tsconfig`; `bun run build`
+  compiles the server to `./opencode-editor` (ignored).
   Keep types lightweight and local to each module.
 
 ## Build and run
@@ -121,9 +122,9 @@ Do not claim a check passed unless it was run in the current worktree and its ex
 
 ## Module-specific patterns
 
-### Database (`src/db.ts`)
+### Database (`src/db.ts` + writes in `src/server.ts`)
 
-All SQL lives here. `listMessages()` hydrates messages with their parts and
+`listMessages()` hydrates messages with their parts and
 attaches non-persisted meta keys (`id`, `sessionID`, `messageID`,
 `time_created`, `time_updated`); the UI strips them via `cleanForSave()`
 before sending `data` back, and the server re-validates. `writeTxn()`
@@ -176,8 +177,7 @@ rendering partial state.
 ## Secrets and local artifacts
 
 Never commit credentials, databases, or runtime output. The following must
-stay untracked (there is currently no `.gitignore`; add one if the task
-touches ignore rules):
+stay untracked (`.gitignore` currently covers only the compiled binary):
 
 - `editor-backups/` (created next to the database in use — including
   `/tmp/editor-backups/` during scratch experiments)

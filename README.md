@@ -25,7 +25,7 @@ context is what gets loaded.
 
 ### Browse & search sessions
 * Session list with message counts, token usage, cost, and compaction badges.
-* Full-text search over title, slug, directory, and id; filter by project.
+* Substring search over title, slug, directory, and id; filter by project.
 * Project list derived from the `project` table (worktree paths).
 
 ### Transcript editing (`message` / `part` tables)
@@ -111,7 +111,7 @@ bun build src/server.ts --compile --outfile opencode-editor
 
 ```
 src/server.ts    Bun.serve router — the whole REST API + static files
-src/db.ts        sole SQL owner: open/pragmas, queries, transactions, backups
+src/db.ts        connection, read queries, transactions, backups; writes live in server.ts handlers
 src/history.ts   filterCompacted port, token estimate, tail suggester
 src/validate.ts  payload validators (part types, roles, session allowlist)
 public/          dependency-free single-page UI (index.html, app.js, styles.css)

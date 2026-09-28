@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>opencode session editor</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+  <h1>opencode session editor</h1>
+  <div id="meta">connecting…</div>
+  <div class="hdr-actions">
+    <button id="btn-backup">Backup now</button>
+    <select id="sel-restore"><option value="">restore…</option></select>
+    <button id="btn-restore">Restore</button>
+  </div>
+</header>
+<div id="notice" hidden></div>
+<main>
+  <section id="view-list">
+    <div class="toolbar">
+      <input id="q" placeholder="search title / slug / dir / id">
+      <select id="f-project"><option value="">all projects</option></select>
+      <button id="btn-search">Search</button>
+    </div>
+    <div id="sessions"></div>
+  </section>
+  <section id="view-detail" hidden>
+    <button id="btn-back">← sessions</button>
+    <h2 id="d-title"></h2>
+    <div id="d-meta" class="muted"></div>
+    <nav class="tabs">
+      <button data-tab="transcript" class="on">Transcript</button>
+      <button data-tab="context">Model context</button>
+      <button data-tab="epoch">Epoch / V2</button>
+      <button data-tab="todos">Todos</button>
+      <button data-tab="settings">Settings</button>
+    </nav>
+    <div id="tab-transcript"></div>
+    <div id="tab-context" hidden></div>
+    <div id="tab-epoch" hidden></div>
+    <div id="tab-todos" hidden></div>
+    <div id="tab-settings" hidden></div>
+  </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

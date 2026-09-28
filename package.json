@@ -1,0 +1,11 @@
+{
+  "name": "opencode-editor",
+  "version": "0.1.0",
+  "description": "Local web editor for opencode.db session history and context",
+  "type": "module",
+  "scripts": {
+    "start": "bun src/server.ts",
+    "dev": "bun --watch src/server.ts",
+    "test": "bun test"
+  }
+}

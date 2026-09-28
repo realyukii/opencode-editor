@@ -4,8 +4,9 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 
 async function api(path, opts = {}) {
   const r = await fetch(path, { headers: { "content-type": "application/json" }, ...opts });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error?.message ?? `HTTP ${r.status}`);
+  const j = await r.json().catch(() => null);
+  if (!r.ok) throw new Error((j && j.error?.message) ?? `HTTP ${r.status} on ${path}`);
+  if (!j || typeof j !== "object" || !("data" in j)) throw new Error(`Unexpected API response from ${path}`);
   return j;
 }
 function notice(msg, ok = true) {

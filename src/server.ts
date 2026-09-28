@@ -80,7 +80,7 @@ const server = Bun.serve({
         const counts: Record<string, number> = {};
         for (const t of ["session", "message", "part", "session_message", "session_context_epoch", "todo", "project"])
           counts[t] = (db.query(`SELECT COUNT(*) AS n FROM ${t}`).get() as { n: number }).n;
-        return json({ dbPath: DB_PATH, journalMode: (db.query("PRAGMA journal_mode").get() as { journal_mode: string }).journal_mode, counts, backups: listBackups().length });
+        return json({ data: { dbPath: DB_PATH, journalMode: (db.query("PRAGMA journal_mode").get() as { journal_mode: string }).journal_mode, counts, backups: listBackups().length } });
       }
       if (p === "/api/projects" && m === "GET") return json({ data: listProjects(db) });
 
